@@ -1,7 +1,9 @@
 package com.trucs.slangtionary;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,20 +11,34 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity {
 
-    WordDao wordDao;
-    LiveData<List<Word>> words;
+    private WordDao wordDao;
+
+    private WordViewModel mModel;
+
+    private LiveData<List<Word>> words;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mModel = ViewModelProviders.of(this).get(WordViewModel.class);
+
         wordDao = AppDatabase.getDB(getApplicationContext()).wordDao();
 
-        new GetWordsTasks().execute(); // How the hell
+//        new GetWordsTasks().execute(); // How the hell
+
+        // I literally copy and paste from Android Developer website and it can't be done this way
+//        final Observer<LiveData<List<Word>>> wordObserver = new Observer<LiveData<List<Word>>>(){
+//            @Override
+//            public void onChanged(@Nullable final LiveData<List<Word>> newWords) {
+//                Log.d(newWords);
+//            }
+//        };
 
         // Log.d("Words", words.toString());
     }
@@ -33,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         String description = "Testing";
         String language = "English";
 
-        Word myWord = new Word(word, description, language); // Help
+        Word myWord = new Word(word, description, language); // So this can't be a LiveData
 
         new AddWordTask().execute(myWord);
     }
@@ -52,32 +68,5 @@ public class MainActivity extends AppCompatActivity {
 
             return null; // What is wrong with Java, why is this actually needed on a Void method this language sucks
         }
-    }
-
-    private class GetWordsTasks extends AsyncTask<Void, Void, LiveData<List<Word>>>
-    {
-        @Override
-        protected LiveData<List<Word>> doInBackground(Void... voids) {
-            // Can I use observer here or do I have to go elsewhere
-
-            try {
-                return wordDao.getAll();
-            } catch(Exception e) {
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(LiveData<List<Word>> result)
-        {
-            getWords(result);
-        }
-    }
-
-    private void getWords(LiveData<List<Word>> result)
-    {
-        Log.d("getWords", result.toString());
-        words = result;
     }
 }
