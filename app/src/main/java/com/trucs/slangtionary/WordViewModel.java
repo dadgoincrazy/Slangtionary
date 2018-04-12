@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.ContentUris;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 
 public class WordViewModel extends AndroidViewModel {
-    private LiveData<List<Word>> words; // This needs to be mutable here
+    private LiveData<List<Word>> words;
     private final Context mContext; // Isn't this literally the whole point of AndroidViewModel
     private WordDao wordDao;
 
@@ -42,28 +43,26 @@ public class WordViewModel extends AndroidViewModel {
         {
             Log.d("Error", "No context provided");
         } else {
-            // This is literally what I was told to do in slides
-            new LoadWordTask().execute(mContext);
+            new LoadWordTask().execute();
         }
     }
 
-    private static class LoadWordTask extends AsyncTask<Context, Void, LiveData<List<Word>>> {
-        private WordDao wordDao;
+    private class LoadWordTask extends AsyncTask<Void, Void, LiveData<List<Word>>> {
 
         @Override
-        protected LiveData<List<Word>> doInBackground(Context... contexts) {
+        protected LiveData<List<Word>> doInBackground(Void... voids) {
             try {
-                wordDao = AppDatabase.getDB(contexts[0]).wordDao();
                 return wordDao.getAll();
             } catch (Exception e) {
-                Toast.makeText(contexts[0], e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(LiveData<List<Word>> result) {
-            setWords(result); // THERE'S GOTTA BE A WAY TO DO THIS??? HOW DO ANY ANDROID APPS EVEN FUNCTION
+            setWords(result);
+            Log.d("onPostExecute", "result" + result.getValue().toString());
         }
     }
 

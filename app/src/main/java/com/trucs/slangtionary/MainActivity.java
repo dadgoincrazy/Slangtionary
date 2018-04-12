@@ -1,6 +1,7 @@
 package com.trucs.slangtionary;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
@@ -11,7 +12,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.List;
-import java.util.Observer;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,19 +26,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d("On Create", "Hello");
+
         mModel = ViewModelProviders.of(this).get(WordViewModel.class);
 
         wordDao = AppDatabase.getDB(getApplicationContext()).wordDao();
 
 //        new GetWordsTasks().execute(); // How the hell
 
+
         // I literally copy and paste from Android Developer website and it can't be done this way
-//        final Observer<LiveData<List<Word>>> wordObserver = new Observer<LiveData<List<Word>>>(){
-//            @Override
-//            public void onChanged(@Nullable final LiveData<List<Word>> newWords) {
-//                Log.d(newWords);
-//            }
-//        };
+        final Observer<List<Word>> wordObserver = new Observer<List<Word>>(){
+            @Override
+            public void onChanged(@Nullable final List<Word> newWords) {
+                Log.d("New Words", "Observed");
+                if(newWords != null)
+                    Log.d("New Words", newWords.toString());
+            }
+        };
+
+        mModel.getWords().observe(this, wordObserver);
 
         // Log.d("Words", words.toString());
     }
