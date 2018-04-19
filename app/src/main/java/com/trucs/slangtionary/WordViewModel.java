@@ -47,6 +47,23 @@ public class WordViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     *
+     * @param word
+     */
+    public void addWord(Word word)
+    {
+        if(mContext == null)
+        {
+            Log.d("Error", "No context provided");
+        } else {
+            new AddWordTask().execute(word);
+        }
+    }
+
+    /**
+     * Loads words from database
+     */
     private class LoadWordTask extends AsyncTask<Void, Void, LiveData<List<Word>>> {
 
         @Override
@@ -62,10 +79,35 @@ public class WordViewModel extends AndroidViewModel {
         @Override
         protected void onPostExecute(LiveData<List<Word>> result) {
             setWords(result);
-            Log.d("onPostExecute", "result" + result.getValue().toString());
+            if(result.getValue() != null) {
+                Log.d("onPostExecute", "result" + result.getValue().toString());
+            }
         }
     }
 
+    /**
+     * AsyncTask to add word to our database
+     */
+    private class AddWordTask extends AsyncTask<Word, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Word[] words) {
+            try {
+                for (Word word : words) {
+                    wordDao.insert(word);
+                }
+            } catch(Exception e) {
+                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+
+            return null;
+        }
+    }
+
+    /**
+     * Sets the words after the AsyncTask gets them from the database
+     * @param resultWords
+     */
     private void setWords(LiveData<List<Word>> resultWords)
     {
         words = resultWords;

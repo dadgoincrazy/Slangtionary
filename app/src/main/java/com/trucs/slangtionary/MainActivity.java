@@ -3,10 +3,12 @@ package com.trucs.slangtionary;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -15,11 +17,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private WordDao wordDao;
-
     private WordViewModel mModel;
+    private RecyclerView mRecyclerView;
 
-    private LiveData<List<Word>> words;
+    WordAdapter wordAdapter;
+
+    LiveData<List<Word>> words;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,51 +32,42 @@ public class MainActivity extends AppCompatActivity {
         Log.d("On Create", "Hello");
 
         mModel = ViewModelProviders.of(this).get(WordViewModel.class);
+        mRecyclerView = findViewById(R.id.wordList);
 
-        wordDao = AppDatabase.getDB(getApplicationContext()).wordDao();
+//        wordAdapter = new WordAdapter(words);
 
-//        new GetWordsTasks().execute(); // How the hell
-
-
-        // I literally copy and paste from Android Developer website and it can't be done this way
+        // Observer to retrieve livedata of our word list
         final Observer<List<Word>> wordObserver = new Observer<List<Word>>(){
             @Override
             public void onChanged(@Nullable final List<Word> newWords) {
                 Log.d("New Words", "Observed");
-                if(newWords != null)
+                if(newWords != null) {
                     Log.d("New Words", newWords.toString());
+                    if(wordAdapter == null) {
+                        wordAdapter = new WordAdapter(newWords);
+                        mRecyclerView.setAdapter(wordAdapter);
+                    } else {
+                        wordAdapter.setWords(newWords);
+                    }
+                }
             }
         };
 
         mModel.getWords().observe(this, wordObserver);
-
-        // Log.d("Words", words.toString());
+//        mRecyclerView.setAdapter(wordAdapter);
     }
 
     public void addWord(View view)
     {
-        String word = "Test";
-        String description = "Testing";
-        String language = "English";
-
-        Word myWord = new Word(word, description, language); // So this can't be a LiveData
-
-        new AddWordTask().execute(myWord);
-    }
-
-    private class AddWordTask extends AsyncTask<Word, Void, Void>
-    {
-        @Override
-        protected Void doInBackground(Word[] words) {
-            try {
-                for (Word word : words) {
-                    wordDao.insert(word);
-                }
-            } catch(Exception e) {
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            }
-
-            return null; // What is wrong with Java, why is this actually needed on a Void method this language sucks
-        }
+//        String word = "Test";
+//        String description = "Testing";
+//        String language = "English";
+//
+//        Word myWord = new Word(word, description, language);
+//
+//        Toast.makeText(this, "Attempting to add word", Toast.LENGTH_SHORT).show();
+//        mModel.addWord(myWord);
+        Intent intent = new Intent(MainActivity.this, AddWordActivity.class);
+        startActivity(intent);
     }
 }

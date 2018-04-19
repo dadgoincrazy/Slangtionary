@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Slangtionary</string>
+    <string name="add_word">Add Word</string>
+    <string name="word_label">Word</string>
+    <string name="desc_label">Description</string>
+    <string name="test_title">Lorem Ipsum</string>
+    <string name="test_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vitae purus ullamcorper, tempor nunc vel, luctus elit. Donec gravida vel mi non mollis. Morbi aliquam auctor mi, ut facilisis odio egestas et. Curabitur fermentum arcu malesuada sodales laoreet. Aliquam ullamcorper at mauris quis lacinia. Ut porta turpis sed pulvinar ullamcorper. Proin vitae felis fermentum, tempus urna quis, dapibus nisi.</string>
+    <string name="back">Back</string>
+    <string name="tts">Read</string>
 </resources>
