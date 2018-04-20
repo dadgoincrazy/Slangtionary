@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.wordList);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-//        wordAdapter = new WordAdapter(words);
 
         // Observer to retrieve livedata of our word list
         final Observer<List<Word>> wordObserver = new Observer<List<Word>>(){
@@ -45,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(@Nullable final List<Word> newWords) {
                 Log.d("New Words", "Observed");
 
+                // If we have words lets update the UI
                 if(newWords != null) {
                     Log.d("New Words", newWords.toString());
                     wordAdapter.setWords(newWords);
@@ -54,23 +54,21 @@ public class MainActivity extends AppCompatActivity {
         };
 
         mModel.getWords().observe(this, wordObserver);
+        // Eventually we will set the real dataset when it gets observed
         wordAdapter = new WordAdapter(null);
         mRecyclerView.setAdapter(wordAdapter);
     }
 
     public void addWord(View view)
     {
-//        String word = "Test 2";
-//        String description = "Testing 2";
-//        String language = "English";
-//
-//        Word myWord = new Word(word, description, language);
-//
-//        Toast.makeText(this, "Attempting to add word", Toast.LENGTH_SHORT).show();
-//        mModel.addWord(myWord);
-
         // Switch activity to add word
         Intent intent = new Intent(MainActivity.this, AddWordActivity.class);
         startActivity(intent);
+    }
+
+    public void deleteAll(View view)
+    {
+        // Deletes all current words from database
+        mModel.deleteAllEntries();
     }
 }

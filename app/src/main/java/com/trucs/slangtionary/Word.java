@@ -24,6 +24,10 @@ public class Word {
         this.language = language;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getWord() {
         return word;
     }

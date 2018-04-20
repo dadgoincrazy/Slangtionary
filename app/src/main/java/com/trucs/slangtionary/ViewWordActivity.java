@@ -1,6 +1,7 @@
 package com.trucs.slangtionary;
 
 import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
@@ -12,16 +13,34 @@ import android.widget.Toast;
 
 import java.util.Locale;
 
+/**
+ *  THIS CLASS TAKES HEAVY SAMPLES FROM https://www.developer.com/ws/android/programming/adding-basic-android-text-to-speech-to-your-apps.html
+ *  Credit to this person for helping me figure out text-to-speach
+ */
+
 public class ViewWordActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     TextToSpeech mTTS = null;
     private final int ACT_CHECK_TTS_DATA = 1000;
+    private WordViewModel mModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_word);
 
+        mModel = ViewModelProviders.of(this).get(WordViewModel.class);
+
         final TextView wordDesc = findViewById(R.id.wordDescription);
+        final TextView wordTitle = findViewById(R.id.wordTitle);
+
+        Intent intent = getIntent();
+        Long id = intent.getLongExtra("wordId", 0);
+        if(id > 0)
+        {
+            Word word = mModel.getWord(id);
+            wordTitle.setText(word.getWord());
+            wordDesc.setText(word.getDescription());
+        }
 
         // Have buttonOnClick read description
         final Button bsay = findViewById(R.id.bsay);
@@ -37,6 +56,13 @@ public class ViewWordActivity extends AppCompatActivity implements TextToSpeech.
         startActivityForResult(ttsIntent, ACT_CHECK_TTS_DATA);
     }
 
+    public void goBack(View v)
+    {
+        Intent intent = new Intent(ViewWordActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    // Speaks the text out loud
     private void saySomething(String text, int qmode) {
         if (qmode == 1)
             mTTS.speak(text, TextToSpeech.QUEUE_ADD, null, null);
@@ -64,17 +90,18 @@ public class ViewWordActivity extends AppCompatActivity implements TextToSpeech.
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
             if (mTTS != null) {
-                int result = mTTS.setLanguage(Locale.US);
+                // Might be able to set this differently based on the language of the word
+                int result = mTTS.setLanguage(Locale.CANADA);
                 if (result == TextToSpeech.LANG_MISSING_DATA ||
                         result == TextToSpeech.LANG_NOT_SUPPORTED) {
                     Toast.makeText(this, "TTS language is not supported", Toast.LENGTH_LONG).show();
                 } else {
-                    saySomething("TTS is ready", 0);
+//                    saySomething("TTS is ready", 0);
+                    Toast.makeText(this, "TTS is ready", Toast.LENGTH_SHORT).show();
                 }
             }
         } else {
-            Toast.makeText(this, "TTS initialization failed",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "TTS initialization failed", Toast.LENGTH_LONG).show();
         }
     }
 

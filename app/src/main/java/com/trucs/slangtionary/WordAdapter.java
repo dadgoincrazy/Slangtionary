@@ -2,6 +2,8 @@ package com.trucs.slangtionary;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by owner on 17/04/2018.
@@ -62,61 +65,60 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> im
 
     @Override
     public void onClick(View v) {
-
+        Context context = v.getContext();
         int position = (Integer) v.getTag();
         Word word = words.get(position);
 
-        Log.d("onClick", "Clicked word: " + word.getWord());
+        Log.d("onClick", "Clicked word: " + word.getId());
+
+        Intent intent = new Intent(context, ViewWordActivity.class);
+        intent.putExtra("wordId", word.getId());
+        context.startActivity(intent);
     }
 
-    public void setWords(List<Word> newWords)
-    {
-        Log.d("Adapter", "Set words called");
-        Log.d("Adapter", newWords.toString());
-        words = newWords;
-    }
-
-    public Word getItem(int position)
-    {
-        return words.get(position);
-    }
-
-    private int lastPosition = -1;
-
-
-//    @Override
-//    public View getView(int position, View convertView, ViewGroup parent){
-//        // Get the data item for this position
-//        Word word = getItem(position);
-//        // Check if an existing view is being reused, otherwise inflate the view
-//        ViewHolder viewHolder;
-//
-//        final View result;
-//
-//        if(convertView == null) {
-//
-//            viewHolder = new ViewHolder();
-//            LayoutInflater inflater = LayoutInflater.from(getContext());
-//            convertView = inflater.inflate(R.layout.row_item, parent, false);
-//            viewHolder.txtName = (TextView) convertView.findViewById(R.id.name);
-//
-//            result = convertView;
-//
-//            convertView.setTag(viewHolder);
-//        } else {
-//            viewHolder = (ViewHolder) convertView.getTag();
-//            result = convertView;
-//        }
-//
-//        Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
-//        result.startAnimation(animation);
-//        lastPosition = position;
-//
-//        viewHolder.txtName.setText(map.getName());
-//        viewHolder.txtName.setOnClickListener(this);
-//        viewHolder.txtName.setTag(position);
-//        // Return the completed view to render on screen
-//        return convertView;
+//    public void setWords(List<Word> newWords)
+//    {
+//        Log.d("Adapter", "Set words called");
+//        Log.d("Adapter", newWords.toString());
+//        words = newWords;
 //    }
+
+    // Excellent example of how to use DiffUtil for datasets using LiveData found at https://github.com/googlesamples/android-architecture-components/blob/master/BasicSample/app/src/main/java/com/example/android/persistence/ui/ProductAdapter.java#L44
+    public void setWords(final List<Word> newWords) {
+        Log.d("Adapter", "Set words called");
+        if (words == null) {
+            words = newWords;
+            notifyItemRangeInserted(0, newWords.size());
+        } else {
+            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                @Override
+                public int getOldListSize() {
+                    return words.size();
+                }
+
+                @Override
+                public int getNewListSize() {
+                    return newWords.size();
+                }
+
+                @Override
+                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                    return words.get(oldItemPosition).getId() ==
+                            newWords.get(newItemPosition).getId();
+                }
+
+                @Override
+                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                    Word newWord = newWords.get(newItemPosition);
+                    Word oldWord = words.get(oldItemPosition);
+                    return newWord.getId() == oldWord.getId()
+                            && Objects.equals(newWord.getDescription(), oldWord.getDescription())
+                            && Objects.equals(newWord.getWord(), oldWord.getWord());
+                }
+            });
+            words = newWords;
+            result.dispatchUpdatesTo(this);
+        }
+    }
 
 }

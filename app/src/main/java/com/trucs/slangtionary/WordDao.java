@@ -18,11 +18,14 @@ public interface WordDao {
     LiveData<List<Word>> getAll();
 
     @Query("SELECT * FROM word WHERE id = :word_id LIMIT 1")
-    LiveData<Word> get(Long word_id);
+    Word get(Long word_id);
 
     @Query("SELECT * FROM word WHERE word LIKE :word")
     LiveData<List<Word>> getLikeWord(String word);
 
     @Insert
     Long insert(Word word);
+
+    @Query("DELETE FROM word")
+    void nukeTable();
 }

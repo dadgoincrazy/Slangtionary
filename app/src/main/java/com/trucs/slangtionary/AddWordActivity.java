@@ -26,6 +26,12 @@ public class AddWordActivity extends AppCompatActivity {
 
     }
 
+    public void goBack(View v)
+    {
+        Intent intent = new Intent(AddWordActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
+
     public void addWord(View v)
     {
         Word word;

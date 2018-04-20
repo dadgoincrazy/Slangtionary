@@ -19,16 +19,17 @@ import java.util.List;
 
 public class WordViewModel extends AndroidViewModel {
     private LiveData<List<Word>> words;
-//    private final Context mContext; // Isn't this literally the whole point of AndroidViewModel
     private WordDao wordDao;
 
     public WordViewModel(@NonNull Application application) {
         super(application);
-
-//        mContext = application.getApplicationContext();
         wordDao = AppDatabase.getDB(application.getApplicationContext()).wordDao();
     }
 
+    /**
+     * Init our dataset
+     * @return words from our database
+     */
     public LiveData<List<Word>> getWords() {
         if(words == null) {
             words = new MutableLiveData<List<Word>>();
@@ -37,8 +38,12 @@ public class WordViewModel extends AndroidViewModel {
         return words;
     }
 
+    /**
+     * Load words from database
+     */
     private void loadWords()
     {
+        // Getting on the UI thread for now
         setWords(wordDao.getAll());
 //        if(getApplication().getApplicationContext() == null)
 //        {
@@ -49,11 +54,12 @@ public class WordViewModel extends AndroidViewModel {
     }
 
     /**
-     *
+     * Add word to database
      * @param word
      */
     public void addWord(Word word)
     {
+        // Inserting on UI thread for now
         wordDao.insert(word);
 //        if(getApplication().getApplicationContext() == null)
 //        {
@@ -61,6 +67,24 @@ public class WordViewModel extends AndroidViewModel {
 //        } else {
 //            new AddWordTask().execute(word);
 //        }
+    }
+
+    /**
+     * Gets 1 word, not LiveData for now
+     * @param id word id
+     * @return word
+     */
+    public Word getWord(Long id) {
+        return wordDao.get(id);
+    }
+
+
+    /**
+     * Deletes all entries
+     */
+    public void deleteAllEntries()
+    {
+        wordDao.nukeTable();
     }
 
     /**
