@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "128566967976",
+    "firebase_url": "https://slangtionary-754ad.firebaseio.com",
+    "project_id": "slangtionary-754ad",
+    "storage_bucket": "slangtionary-754ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:128566967976:android:0d50de0546b1b8ab",
+        "android_client_info": {
+          "package_name": "com.trucs.slangtionary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "128566967976-kusb9q6aqhlteiub2dshfp3kv2alb4m9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trucs.slangtionary",
+            "certificate_hash": "45561b9793eb3141f6d114d33f1633b360f196b0"
+          }
+        },
+        {
+          "client_id": "128566967976-it6jtespko6dmd0al4hfik9aki3rppe0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDz6bRpTpJOx23uu8bx7MDq1YOVoit20WE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "128566967976-it6jtespko6dmd0al4hfik9aki3rppe0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
