@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import java.util.Locale;
 
-public class ViewWordActivity extends Activity implements TextToSpeech.OnInitListener {
+public class ViewWordActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     TextToSpeech mTTS = null;
     private final int ACT_CHECK_TTS_DATA = 1000;
 
@@ -21,10 +21,10 @@ public class ViewWordActivity extends Activity implements TextToSpeech.OnInitLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_word);
 
-        final TextView wordDesc = (TextView) findViewById(R.id.wordDescription);
+        final TextView wordDesc = findViewById(R.id.wordDescription);
 
         // Have buttonOnClick read description
-        final Button bsay = (Button) findViewById(R.id.bsay);
+        final Button bsay = findViewById(R.id.bsay);
         bsay.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saySomething(wordDesc.getText().toString().trim(), 1);

@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -19,10 +20,11 @@ public class MainActivity extends AppCompatActivity {
 
     private WordViewModel mModel;
     private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     WordAdapter wordAdapter;
 
-    LiveData<List<Word>> words;
+    List<Word> words;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
         mModel = ViewModelProviders.of(this).get(WordViewModel.class);
         mRecyclerView = findViewById(R.id.wordList);
-
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 //        wordAdapter = new WordAdapter(words);
 
         // Observer to retrieve livedata of our word list
@@ -41,32 +44,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable final List<Word> newWords) {
                 Log.d("New Words", "Observed");
+
                 if(newWords != null) {
                     Log.d("New Words", newWords.toString());
-                    if(wordAdapter == null) {
-                        wordAdapter = new WordAdapter(newWords);
-                        mRecyclerView.setAdapter(wordAdapter);
-                    } else {
-                        wordAdapter.setWords(newWords);
-                    }
+                    wordAdapter.setWords(newWords);
+                    wordAdapter.notifyDataSetChanged();
                 }
             }
         };
 
         mModel.getWords().observe(this, wordObserver);
-//        mRecyclerView.setAdapter(wordAdapter);
+        wordAdapter = new WordAdapter(null);
+        mRecyclerView.setAdapter(wordAdapter);
     }
 
     public void addWord(View view)
     {
-//        String word = "Test";
-//        String description = "Testing";
+//        String word = "Test 2";
+//        String description = "Testing 2";
 //        String language = "English";
 //
 //        Word myWord = new Word(word, description, language);
 //
 //        Toast.makeText(this, "Attempting to add word", Toast.LENGTH_SHORT).show();
 //        mModel.addWord(myWord);
+
+        // Switch activity to add word
         Intent intent = new Intent(MainActivity.this, AddWordActivity.class);
         startActivity(intent);
     }

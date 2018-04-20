@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,9 +25,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> im
     // View lookup cache
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtName;
-        private ViewHolder(TextView v) {
+        private ViewHolder(RelativeLayout v) {
             super(v);
-            txtName = v;
+            txtName = v.findViewById(R.id.row_item);
         }
     }
 
@@ -36,19 +37,27 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> im
 
     @Override
     public WordAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        TextView v = (TextView) LayoutInflater.from(parent.getContext())
+        RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.row_item, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Log.d("onBindViewHolder", words.get(position).getWord());
         holder.txtName.setText(words.get(position).getWord());
+        holder.txtName.setOnClickListener(this);
+        holder.txtName.setTag(position);
     }
 
     @Override
     public int getItemCount() {
-        return words.size();
+        try {
+            return words.size();
+        } catch(Exception e) {
+            Log.d("getItemCount", e.getMessage());
+            return 0;
+        }
     }
 
     @Override
@@ -62,10 +71,18 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> im
 
     public void setWords(List<Word> newWords)
     {
+        Log.d("Adapter", "Set words called");
+        Log.d("Adapter", newWords.toString());
         words = newWords;
     }
-//
-//    private int lastPosition = -1;
+
+    public Word getItem(int position)
+    {
+        return words.get(position);
+    }
+
+    private int lastPosition = -1;
+
 
 //    @Override
 //    public View getView(int position, View convertView, ViewGroup parent){

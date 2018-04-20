@@ -19,14 +19,14 @@ import java.util.List;
 
 public class WordViewModel extends AndroidViewModel {
     private LiveData<List<Word>> words;
-    private final Context mContext; // Isn't this literally the whole point of AndroidViewModel
+//    private final Context mContext; // Isn't this literally the whole point of AndroidViewModel
     private WordDao wordDao;
 
     public WordViewModel(@NonNull Application application) {
         super(application);
 
-        mContext = application.getApplicationContext();
-        wordDao = AppDatabase.getDB(mContext).wordDao();
+//        mContext = application.getApplicationContext();
+        wordDao = AppDatabase.getDB(application.getApplicationContext()).wordDao();
     }
 
     public LiveData<List<Word>> getWords() {
@@ -39,12 +39,13 @@ public class WordViewModel extends AndroidViewModel {
 
     private void loadWords()
     {
-        if(mContext == null)
-        {
-            Log.d("Error", "No context provided");
-        } else {
-            new LoadWordTask().execute();
-        }
+        setWords(wordDao.getAll());
+//        if(getApplication().getApplicationContext() == null)
+//        {
+//            Log.d("Error", "No context provided");
+//        } else {
+//            new LoadWordTask().execute();
+//        }
     }
 
     /**
@@ -53,12 +54,13 @@ public class WordViewModel extends AndroidViewModel {
      */
     public void addWord(Word word)
     {
-        if(mContext == null)
-        {
-            Log.d("Error", "No context provided");
-        } else {
-            new AddWordTask().execute(word);
-        }
+        wordDao.insert(word);
+//        if(getApplication().getApplicationContext() == null)
+//        {
+//            Log.d("Error", "No context provided");
+//        } else {
+//            new AddWordTask().execute(word);
+//        }
     }
 
     /**
@@ -69,9 +71,10 @@ public class WordViewModel extends AndroidViewModel {
         @Override
         protected LiveData<List<Word>> doInBackground(Void... voids) {
             try {
+                Log.d("Async", "Load words");
                 return wordDao.getAll();
             } catch (Exception e) {
-                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.d("Error", e.getMessage());
             }
             return null;
         }
@@ -93,11 +96,12 @@ public class WordViewModel extends AndroidViewModel {
         @Override
         protected Void doInBackground(Word[] words) {
             try {
+                Log.d("Async", "Add words");
                 for (Word word : words) {
                     wordDao.insert(word);
                 }
             } catch(Exception e) {
-                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.d("Error", e.getMessage());
             }
 
             return null;
