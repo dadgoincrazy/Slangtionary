@@ -46,7 +46,7 @@ public class ViewWordActivity extends AppCompatActivity implements TextToSpeech.
         final Button bsay = findViewById(R.id.bsay);
         bsay.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                saySomething(wordDesc.getText().toString().trim(), 1);
+                saySomething(wordTitle.getText().toString().trim() + " - " + wordDesc.getText().toString().trim(), 1);
             }
         });
 
@@ -56,6 +56,10 @@ public class ViewWordActivity extends AppCompatActivity implements TextToSpeech.
         startActivityForResult(ttsIntent, ACT_CHECK_TTS_DATA);
     }
 
+    /**
+     * Goes back to the MainActivity, which is the list of words
+     * @param v
+     */
     public void goBack(View v)
     {
         Intent intent = new Intent(ViewWordActivity.this, MainActivity.class);
@@ -70,6 +74,12 @@ public class ViewWordActivity extends AppCompatActivity implements TextToSpeech.
             mTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
     }
 
+    /**
+     * Checks if we can initialize TextToSpeech Engine, if we can't we download the files so we can
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
@@ -87,6 +97,10 @@ public class ViewWordActivity extends AppCompatActivity implements TextToSpeech.
         }
     }
 
+    /**
+     * Checks and tells us if TTS initialization was successful or not
+     * @param status
+     */
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
             if (mTTS != null) {
@@ -105,6 +119,9 @@ public class ViewWordActivity extends AppCompatActivity implements TextToSpeech.
         }
     }
 
+    /**
+     * on destroy we need to shut down TTS so it doesn't lock up resources
+     */
     @Override
     protected void onDestroy() {
         if (mTTS != null) {

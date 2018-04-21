@@ -88,7 +88,7 @@ public class WordViewModel extends AndroidViewModel {
     }
 
     /**
-     * Loads words from database
+     * AsyncTask to load words from database
      */
     private class LoadWordTask extends AsyncTask<Void, Void, LiveData<List<Word>>> {
 

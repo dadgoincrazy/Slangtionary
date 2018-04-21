@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Created by owner on 17/04/2018.
+ * Created by Cody on 17/04/2018.
  */
 
 public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> implements View.OnClickListener {
@@ -34,10 +34,20 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> im
         }
     }
 
+    /**
+     * Standard constructor
+     * @param words our dataset for the adapter
+     */
     public WordAdapter(List<Word> words){
         this.words = words;
     }
 
+    /**
+     * Inflates list items on creation of view holders
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public WordAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
@@ -45,6 +55,11 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> im
         return new ViewHolder(v);
     }
 
+    /**
+     * Sets up new list items as we scroll
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Log.d("onBindViewHolder", words.get(position).getWord());
@@ -53,6 +68,10 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> im
         holder.txtName.setTag(position);
     }
 
+    /**
+     * standard getItemCount method, also checks that we aren't trying to find size of null
+     * @return size of the dataset
+     */
     @Override
     public int getItemCount() {
         try {
@@ -63,6 +82,10 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> im
         }
     }
 
+    /**
+     * Gets the clicked list item and starts the ViewWordActivity passing the clicked word id as an extra
+     * @param v is the list item clicked
+     */
     @Override
     public void onClick(View v) {
         Context context = v.getContext();
@@ -76,20 +99,15 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.ViewHolder> im
         context.startActivity(intent);
     }
 
-//    public void setWords(List<Word> newWords)
-//    {
-//        Log.d("Adapter", "Set words called");
-//        Log.d("Adapter", newWords.toString());
-//        words = newWords;
-//    }
-
     // Excellent example of how to use DiffUtil for datasets using LiveData found at https://github.com/googlesamples/android-architecture-components/blob/master/BasicSample/app/src/main/java/com/example/android/persistence/ui/ProductAdapter.java#L44
     public void setWords(final List<Word> newWords) {
         Log.d("Adapter", "Set words called");
+        // If we have no current words we can just set the dataset normally
         if (words == null) {
             words = newWords;
             notifyItemRangeInserted(0, newWords.size());
         } else {
+            // Otherwise we perform a diffutil callback to find what has been changed and update it accordingly
             DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
                 @Override
                 public int getOldListSize() {
